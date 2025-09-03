@@ -455,6 +455,76 @@
             opacity: 1;
             transform: translateY(0);
         }
+        
+        /* Style pour les paramètres avancés */
+        .settings-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+            max-width: 500px;
+            display: none;
+        }
+        
+        .settings-panel h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .settings-toggle {
+            background: var(--dark-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .color-picker label {
+            min-width: 120px;
+        }
+        
+        .color-picker input[type="color"] {
+            width: 50px;
+            height: 30px;
+            padding: 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .settings-group {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .settings-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -556,6 +626,64 @@
                     <button type="submit" class="btn-generate">Générer la carte</button>
                 </form>
                 
+                <button id="settingsToggle" class="settings-toggle">Paramètres avancés</button>
+                
+                <div class="settings-panel" id="settingsPanel">
+                    <h3>Paramètres d'apparence</h3>
+                    
+                    <div class="settings-group">
+                        <h4>Couleurs de la carte</h4>
+                        <div class="color-picker">
+                            <label for="cardBgColor">Couleur de fond :</label>
+                            <input type="color" id="cardBgColor" value="#f5f7fa">
+                        </div>
+                        <div class="color-picker">
+                            <label for="cardTextColor">Couleur du texte :</label>
+                            <input type="color" id="cardTextColor" value="#333333">
+                        </div>
+                        <div class="color-picker">
+                            <label for="cardBorderColor">Couleur de bordure :</label>
+                            <input type="color" id="cardBorderColor" value="#b0b0b0">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h4>Options d'affichage</h4>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="showBarcode" checked>
+                            <label for="showBarcode">Afficher le code-barres</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="showQRCode" checked>
+                            <label for="showQRCode">Afficher le QR code</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="showLogos" checked>
+                            <label for="showLogos">Afficher les logos</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="showSignature" checked>
+                            <label for="showSignature">Afficher la signature</label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h4>Options de téléchargement</h4>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="highQualityDownload" checked>
+                            <label for="highQualityDownload">Téléchargement haute qualité</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="downloadFormat">Format de téléchargement :</label>
+                            <select id="downloadFormat">
+                                <option value="png">PNG</option>
+                                <option value="jpeg">JPEG</option>
+                                <option value="pdf">PDF</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="action-buttons">
                     <button id="downloadBtn" class="btn-download" disabled>Télécharger</button>
                     <button id="resetBtn" class="btn-reset">Réinitialiser</button>
@@ -606,7 +734,7 @@
                         </div>
                         <div class="additional-info">
                             <p><strong>Adresse :</strong> <span id="cardAdresse"></span></p>
-                            <p>Cette carte est propriété de l'État. En cas de perte ou de vol, veuillez le signaler immédiatement aux autorités compétentes.</p>
+                            <p>Cette carte est propriété de l'État. En cas de perdre ou de vol, veuillez le signaler immédiatement aux autorités compétentes.</p>
                         </div>
                         <div class="signature-area">
                             <div>
@@ -633,6 +761,7 @@
                 <li>Cliquez sur "Générer la carte" pour prévisualiser</li>
                 <li>Utilisez le bouton "Retourner la carte" pour voir le verso</li>
                 <li>Téléchargez la carte avec le bouton "Télécharger"</li>
+                <li>Utilisez les paramètres avancés pour personnaliser l'apparence</li>
             </ol>
         </div>
     </div>
@@ -642,6 +771,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('idForm');
@@ -652,6 +782,79 @@
             const flipBtn = document.getElementById('flipBtn');
             const idCard = document.getElementById('idCardOutput');
             const notification = document.getElementById('notification');
+            const settingsToggle = document.getElementById('settingsToggle');
+            const settingsPanel = document.getElementById('settingsPanel');
+            
+            // Paramètres par défaut
+            let settings = {
+                cardBgColor: '#f5f7fa',
+                cardTextColor: '#333333',
+                cardBorderColor: '#b0b0b0',
+                showBarcode: true,
+                showQRCode: true,
+                showLogos: true,
+                showSignature: true,
+                highQualityDownload: true,
+                downloadFormat: 'png'
+            };
+            
+            // Charger les paramètres depuis le localStorage
+            function loadSettings() {
+                const savedSettings = localStorage.getItem('idCardSettings');
+                if (savedSettings) {
+                    settings = JSON.parse(savedSettings);
+                    
+                    // Appliquer les paramètres chargés aux éléments du formulaire
+                    document.getElementById('cardBgColor').value = settings.cardBgColor;
+                    document.getElementById('cardTextColor').value = settings.cardTextColor;
+                    document.getElementById('cardBorderColor').value = settings.cardBorderColor;
+                    document.getElementById('showBarcode').checked = settings.showBarcode;
+                    document.getElementById('showQRCode').checked = settings.showQRCode;
+                    document.getElementById('showLogos').checked = settings.showLogos;
+                    document.getElementById('showSignature').checked = settings.showSignature;
+                    document.getElementById('highQualityDownload').checked = settings.highQualityDownload;
+                    document.getElementById('downloadFormat').value = settings.downloadFormat;
+                    
+                    // Appliquer les paramètres visuels
+                    applySettings();
+                }
+            }
+            
+            // Sauvegarder les paramètres dans le localStorage
+            function saveSettings() {
+                localStorage.setItem('idCardSettings', JSON.stringify(settings));
+            }
+            
+            // Appliquer les paramètres à la carte
+            function applySettings() {
+                // Appliquer les couleurs
+                idCard.style.background = `linear-gradient(135deg, ${settings.cardBgColor} 0%, ${lightenColor(settings.cardBgColor, 20)} 100%)`;
+                idCard.style.color = settings.cardTextColor;
+                idCard.style.borderColor = settings.cardBorderColor;
+                
+                // Appliquer la visibilité des éléments
+                document.getElementById('barcode').style.display = settings.showBarcode ? 'block' : 'none';
+                document.getElementById('qrCode').style.display = settings.showQRCode ? 'block' : 'none';
+                document.getElementById('logo-left').style.display = settings.showLogos ? 'flex' : 'none';
+                document.getElementById('logo-right').style.display = settings.showLogos ? 'flex' : 'none';
+                document.getElementById('signatureOutput').style.display = settings.showSignature ? 'block' : 'none';
+            }
+            
+            // Fonction pour éclaircir une couleur
+            function lightenColor(color, percent) {
+                const num = parseInt(color.replace('#', ''), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) + amt;
+                const G = (num >> 8 & 0x00FF) + amt;
+                const B = (num & 0x0000FF) + amt;
+                
+                return '#' + (
+                    0x1000000 +
+                    (R < 255 ? (R < 0 ? 0 : R) : 255) * 0x10000 +
+                    (G < 255 ? (G < 0 ? 0 : G) : 255) * 0x100 +
+                    (B < 255 ? (B < 0 ? 0 : B) : 255)
+                ).toString(16).slice(1);
+            }
             
             // Afficher une notification
             function showNotification(message, isSuccess = true) {
@@ -750,14 +953,31 @@
                 
                 // Attendre le rendu de la carte
                 setTimeout(() => {
+                    const scale = settings.highQualityDownload ? 3 : 2;
+                    
                     html2canvas(idCard, {
                         backgroundColor: null,
-                        scale: 2 // Qualité plus élevée
+                        scale: scale
                     }).then(canvas => {
-                        const link = document.createElement('a');
-                        link.download = `carte_identite_${side === 'both' ? 'complet' : side}.png`;
-                        link.href = canvas.toDataURL('image/png');
-                        link.click();
+                        if (settings.downloadFormat === 'pdf') {
+                            // Créer un PDF
+                            const { jsPDF } = window.jspdf;
+                            const doc = new jsPDF({
+                                orientation: 'landscape',
+                                unit: 'mm',
+                                format: [idCard.offsetWidth * 0.264583, idCard.offsetHeight * 0.264583]
+                            });
+                            
+                            doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 
+                                        idCard.offsetWidth * 0.264583, idCard.offsetHeight * 0.264583);
+                            doc.save(`carte_identite_${side === 'both' ? 'complet' : side}.pdf`);
+                        } else {
+                            // Télécharger en image
+                            const link = document.createElement('a');
+                            link.download = `carte_identite_${side === 'both' ? 'complet' : side}.${settings.downloadFormat}`;
+                            link.href = canvas.toDataURL(`image/${settings.downloadFormat}`);
+                            link.click();
+                        }
                         
                         // Restaurer l'état précédent de la carte
                         if (side === 'front' && wasFlipped) {
@@ -838,6 +1058,9 @@
                 const qrText = `CARTE D'IDENTITÉ\nNuméro: ${cardNumber}\nNom: ${nom}\nPrénoms: ${prenoms}\nNé(e) le: ${dateNaissance}\nÀ: ${lieuNaissance}\nDélivrée le: ${delivrance}\nExpire le: ${expiration}`;
                 generateQRCode(qrText, document.getElementById('qrCode'));
                 
+                // Appliquer les paramètres
+                applySettings();
+                
                 // Afficher la carte si elle était cachée
                 idCard.style.display = 'block';
                 
@@ -906,10 +1129,77 @@
                 }
             });
             
+            // Gérer l'affichage des paramètres
+            settingsToggle.addEventListener('click', function() {
+                if (settingsPanel.style.display === 'block') {
+                    settingsPanel.style.display = 'none';
+                    settingsToggle.textContent = 'Paramètres avancés';
+                } else {
+                    settingsPanel.style.display = 'block';
+                    settingsToggle.textContent = 'Masquer les paramètres';
+                }
+            });
+            
+            // Gérer les changements de paramètres
+            document.getElementById('cardBgColor').addEventListener('change', function() {
+                settings.cardBgColor = this.value;
+                applySettings();
+                saveSettings();
+            });
+            
+            document.getElementById('cardTextColor').addEventListener('change', function() {
+                settings.cardTextColor = this.value;
+                applySettings();
+                saveSettings();
+            });
+            
+            document.getElementById('cardBorderColor').addEventListener('change', function() {
+                settings.cardBorderColor = this.value;
+                applySettings();
+                saveSettings();
+            });
+            
+            document.getElementById('showBarcode').addEventListener('change', function() {
+                settings.showBarcode = this.checked;
+                applySettings();
+                saveSettings();
+            });
+            
+            document.getElementById('showQRCode').addEventListener('change', function() {
+                settings.showQRCode = this.checked;
+                applySettings();
+                saveSettings();
+            });
+            
+            document.getElementById('showLogos').addEventListener('change', function() {
+                settings.showLogos = this.checked;
+                applySettings();
+                saveSettings();
+            });
+            
+            document.getElementById('showSignature').addEventListener('change', function() {
+                settings.showSignature = this.checked;
+                applySettings();
+                saveSettings();
+            });
+            
+            document.getElementById('highQualityDownload').addEventListener('change', function() {
+                settings.highQualityDownload = this.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('downloadFormat').addEventListener('change', function() {
+                settings.downloadFormat = this.value;
+                saveSettings();
+            });
+            
             // Initialiser la date de naissance à une valeur par défaut (il y a 25 ans)
             const defaultDate = new Date();
             defaultDate.setFullYear(defaultDate.getFullYear() - 25);
             document.getElementById('dateNaissance').valueAsDate = defaultDate;
+            
+            // Charger les paramètres sauvegardés
+            loadSettings();
         });
     </script>
 </body>
