@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte d'identité</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0e0e0;
+            display: flex;
+            flex-direction: column; /* Pour empiler le formulaire et la carte */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 0;
+        }
+        .form-container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            width: 300px; /* Réduction de la largeur */
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button[type="submit"]:hover {
+            background-color: #34495e;
+        }
+        .id-card {
+            display: none; /* Caché par défaut */
+            width: 300px; /* Réduction de la largeur */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px; /* Bords moins arrondis */
+            padding: 12px; /* Padding réduit */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border: 1px solid #b0b0b0;
+            position: relative; /* Pour positionner les logos */
+        }
+        .logo-circle {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #logo-left {
+            top: 12px;
+            left: 12px;
+        }
+        #logo-right {
+            top: 12px;
+            right: 12px;
+        }
+        .id-card-header {
+            text-align: center;
+            border-bottom: 1.5px solid #333; /* Ligne plus fine */
+            padding-bottom: 6px; /* Padding réduit */
+            margin-bottom: 8px; /* Marge réduite */
+        }
+        .id-card-header h2 {
+            margin: 0;
+            font-size: 0.8em; /* Réduction de la police */
+            color: #2c3e50;
+            letter-spacing: 1px; /* Espacement des lettres */
+        }
+        .id-card-header h3 {
+            margin: 4px 0 0;
+            font-size: 0.7em; /* Réduction de la police */
+            font-weight: normal;
+            color: #34495e;
+        }
+        .id-card-body {
+            display: flex;
+            align-items: flex-start;
+        }
+        .photo {
+            width: 80px; /* Réduction de la taille */
+            height: 105px; /* Réduction de la taille */
+            border: 1.5px solid #bdc3c7;
+            margin-right: 12px; /* Réduction de la marge */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #7f8c8d;
+            background-color: #ecf0f1;
+            font-size: 0.7em; /* Réduction de la police */
+            overflow: hidden; /* Pour contenir l'image */
+        }
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Assure que l'image remplit l'espace */
+        }
+        .info p {
+            margin: 4px 0; /* Réduction de la marge */
+            font-size: 0.7em; /* Réduction de la police */
+        }
+        .info p strong {
+            display: inline-block;
+            width: 65px; /* Réduction de la largeur */
+            color: #555;
+        }
+        .id-card-footer {
+            margin-top: 10px; /* Réduction de la marge */
+            padding-top: 6px; /* Padding réduit */
+            border-top: 1px dashed #7f8c8d;
+            font-size: 0.6em; /* Réduction de la police */
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Remplissez vos informations</h2>
+        <form id="idForm">
+            <div class="form-group">
+                <label for="republique">Nom de la République :</label>
+                <input type="text" id="republique" name="republique" value="RÉPUBLIQUE FICTIVE" required>
+            </div>
+            <div class="form-group">
+                <label for="cardName">Nom de la carte :</label>
+                <input type="text" id="cardName" name="cardName" value="CARTE NATIONALE D'IDENTITÉ" required>
+            </div>
+            <div class="form-group">
+                <label for="nom">Nom :</label>
+                <input type="text" id="nom" name="nom" required>
+            </div>
+            <div class="form-group">
+                <label for="prenoms">Prénoms :</label>
+                <input type="text" id="prenoms" name="prenoms" required>
+            </div>
+            <div class="form-group">
+                <label for="dateNaissance">Date de naissance :</label>
+                <input type="date" id="dateNaissance" name="dateNaissance" required>
+            </div>
+            <div class="form-group">
+                <label for="lieuNaissance">Lieu de naissance :</label>
+                <input type="text" id="lieuNaissance" name="lieuNaissance" required>
+            </div>
+            <div class="form-group">
+                <label for="sexe">Sexe :</label>
+                <select id="sexe" name="sexe" required>
+                    <option value="F">Féminin</option>
+                    <option value="M">Masculin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="nationalite">Nationalité :</label>
+                <input type="text" id="nationalite" name="nationalite" value="Fictive" required>
+            </div>
+            <div class="form-group">
+                <label for="contact">Contact :</label>
+                <input type="text" id="contact" name="contact" required>
+            </div>
+            <div class="form-group">
+                <label for="photoInput">Photo d'identité :</label>
+                <input type="file" id="photoInput" name="photoInput" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="logoLeftInput">Logo Gauche :</label>
+                <input type="file" id="logoLeftInput" name="logoLeftInput" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="logoRightInput">Logo Droit :</label>
+                <input type="file" id="logoRightInput" name="logoRightInput" accept="image/*">
+            </div>
+            <button type="submit">Créer la carte</button>
+        </form>
+    </div>
+
+    <div class="id-card" id="idCardOutput">
+        <div class="logo-circle" id="logo-left"></div>
+        <div class="logo-circle" id="logo-right"></div>
+        <div class="id-card-header">
+            <h2><span id="cardRepublique"></span></h2>
+            <h3><span id="cardCardName"></span></h3>
+        </div>
+        <div class="id-card-body">
+            <div class="photo" id="photoOutput">
+                <span>PHOTO</span>
+            </div>
+            <div class="info">
+                <p><strong>Nom :</strong> <span id="cardNom"></span></p>
+                <p><strong>Prénoms :</strong> <span id="cardPrenoms"></span></p>
+                <p><strong>Né(e) le :</strong> <span id="cardDateNaissance"></span></p>
+                <p><strong>À :</strong> <span id="cardLieuNaissance"></span></p>
+                <p><strong>Sexe :</strong> <span id="cardSexe"></span></p>
+                <p><strong>Nationalité :</strong> <span id="cardNationalite"></span></p>
+            </div>
+        </div>
+        <div class="id-card-footer">
+            <p><strong>Contact :</strong> <span id="cardContact"></span></p>
+            <p><strong>N° de la carte:</strong> <span id="cardNumero"></span></p>
+            <p><strong>Date de délivrance:</strong> <span id="cardDelivrance"></span> | <strong>Date d'expiration:</strong> <span id="cardExpiration"></span></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('idForm').addEventListener('submit', function(event) {
+            // Empêche le rechargement de la page
+            event.preventDefault();
+
+            // Récupérer les valeurs du formulaire
+            const republique = document.getElementById('republique').value.toUpperCase();
+            const cardName = document.getElementById('cardName').value.toUpperCase();
+            const nom = document.getElementById('nom').value.toUpperCase();
+            const prenoms = document.getElementById('prenoms').value;
+            const dateNaissanceInput = document.getElementById('dateNaissance').value;
+            const lieuNaissance = document.getElementById('lieuNaissance').value.toUpperCase();
+            const sexe = document.getElementById('sexe').value;
+            const nationalite = document.getElementById('nationalite').value;
+            const contact = document.getElementById('contact').value;
+            const photoFile = document.getElementById('photoInput').files[0];
+            const logoLeftFile = document.getElementById('logoLeftInput').files[0];
+            const logoRightFile = document.getElementById('logoRightInput').files[0];
+
+            // Formater la date de naissance (AAAA-MM-JJ -> JJ/MM/AAAA)
+            const dateParts = dateNaissanceInput.split('-');
+            const dateNaissance = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+            // Mettre à jour les informations sur la carte
+            document.getElementById('cardRepublique').textContent = republique;
+            document.getElementById('cardCardName').textContent = cardName;
+            document.getElementById('cardNom').textContent = nom;
+            document.getElementById('cardPrenoms').textContent = prenoms;
+            document.getElementById('cardDateNaissance').textContent = dateNaissance;
+            document.getElementById('cardLieuNaissance').textContent = lieuNaissance;
+            document.getElementById('cardSexe').textContent = sexe;
+            document.getElementById('cardNationalite').textContent = nationalite;
+            document.getElementById('cardContact').textContent = contact;
+
+            // Fonction pour charger une image
+            const loadImage = (file, element) => {
+                element.innerHTML = ''; // Vider le contenu
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        element.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            // Gérer l'affichage des images
+            loadImage(photoFile, document.getElementById('photoOutput'));
+            loadImage(logoLeftFile, document.getElementById('logo-left'));
+            loadImage(logoRightFile, document.getElementById('logo-right'));
+            
+            if (!photoFile) {
+                document.getElementById('photoOutput').innerHTML = '<span>PHOTO</span>';
+            }
+
+            // Générer des informations fictives pour le pied de page
+            document.getElementById('cardNumero').textContent = Math.floor(Math.random() * 900000000000) + 100000000000;
+            const today = new Date();
+            const delivrance = today.toLocaleDateString('fr-FR');
+            const expiration = new Date(today.setFullYear(today.getFullYear() + 10)).toLocaleDateString('fr-FR');
+            document.getElementById('cardDelivrance').textContent = delivrance;
+            document.getElementById('cardExpiration').textContent = expiration;
+
+            // Afficher la carte
+            document.getElementById('idCardOutput').style.display = 'block';
+            
+            // Optionnel: cacher le formulaire après la création
+            // document.querySelector('.form-container').style.display = 'none';
+        });
+    </script>
+
+</body>
+</html>
