@@ -3,75 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte d'identité</title>
+    <title>Générateur de Carte d'Identité</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e0e0e0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             display: flex;
-            flex-direction: column; /* Pour empiler le formulaire et la carte */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px 0;
+            padding: 20px;
+            color: #333;
         }
+        
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            color: var(--dark-color);
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
         .form-container {
             background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            width: 300px; /* Réduction de la largeur */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
         }
+        
         .form-container h2 {
             text-align: center;
             margin-top: 0;
-            color: #333;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 10px;
         }
+        
+        .form-container h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+        
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+        
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #555;
+            font-weight: 500;
         }
+        
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             box-sizing: border-box;
+            font-family: inherit;
+            transition: border 0.3s ease;
         }
-        button[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #2c3e50;
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        button {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 1em;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s;
         }
-        button[type="submit"]:hover {
-            background-color: #34495e;
+        
+        button:hover {
+            background-color: var(--dark-color);
+            transform: translateY(-2px);
         }
+        
+        .btn-generate {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1em;
+            margin-top: 10px;
+            background: var(--secondary-color);
+        }
+        
+        .btn-generate:hover {
+            background: #2980b9;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-download {
+            background: var(--success-color);
+        }
+        
+        .btn-reset {
+            background: var(--accent-color);
+        }
+        
+        .id-card-container {
+            position: relative;
+            perspective: 1000px;
+        }
+        
         .id-card {
-            display: none; /* Caché par défaut */
-            width: 300px; /* Réduction de la largeur */
+            width: 350px;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 10px; /* Bords moins arrondis */
-            padding: 12px; /* Padding réduit */
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             border: 1px solid #b0b0b0;
-            position: relative; /* Pour positionner les logos */
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
         }
+        
+        .id-card:hover {
+            transform: rotateY(5deg);
+        }
+        
+        .id-card-front, .id-card-back {
+            backface-visibility: hidden;
+        }
+        
+        .id-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #c3cfe2 0%, #f5f7fa 100%);
+            border-radius: 12px;
+            padding: 15px;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .flip-card {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-button {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--secondary-color);
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+        
         .logo-circle {
             position: absolute;
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background-color: #fff;
             border: 1px solid #ccc;
@@ -80,202 +242,445 @@
             justify-content: center;
             align-items: center;
         }
+        
         .logo-circle img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+        
         #logo-left {
-            top: 12px;
-            left: 12px;
+            top: 15px;
+            left: 15px;
         }
+        
         #logo-right {
-            top: 12px;
-            right: 12px;
+            top: 15px;
+            right: 15px;
         }
+        
         .id-card-header {
             text-align: center;
-            border-bottom: 1.5px solid #333; /* Ligne plus fine */
-            padding-bottom: 6px; /* Padding réduit */
-            margin-bottom: 8px; /* Marge réduite */
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
         }
+        
         .id-card-header h2 {
             margin: 0;
-            font-size: 0.8em; /* Réduction de la police */
-            color: #2c3e50;
-            letter-spacing: 1px; /* Espacement des lettres */
+            font-size: 0.9em;
+            color: var(--primary-color);
+            letter-spacing: 1px;
         }
+        
         .id-card-header h3 {
             margin: 4px 0 0;
-            font-size: 0.7em; /* Réduction de la police */
+            font-size: 0.75em;
             font-weight: normal;
-            color: #34495e;
+            color: var(--dark-color);
         }
+        
         .id-card-body {
             display: flex;
             align-items: flex-start;
+            margin-bottom: 15px;
         }
+        
         .photo {
-            width: 80px; /* Réduction de la taille */
-            height: 105px; /* Réduction de la taille */
-            border: 1.5px solid #bdc3c7;
-            margin-right: 12px; /* Réduction de la marge */
+            width: 90px;
+            height: 115px;
+            border: 2px solid #bdc3c7;
+            margin-right: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
             color: #7f8c8d;
             background-color: #ecf0f1;
-            font-size: 0.7em; /* Réduction de la police */
-            overflow: hidden; /* Pour contenir l'image */
+            font-size: 0.75em;
+            overflow: hidden;
         }
+        
         .photo img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Assure que l'image remplit l'espace */
+            object-fit: cover;
         }
+        
         .info p {
-            margin: 4px 0; /* Réduction de la marge */
-            font-size: 0.7em; /* Réduction de la police */
+            margin: 5px 0;
+            font-size: 0.75em;
         }
+        
         .info p strong {
             display: inline-block;
-            width: 65px; /* Réduction de la largeur */
+            width: 75px;
             color: #555;
         }
+        
         .id-card-footer {
-            margin-top: 10px; /* Réduction de la marge */
-            padding-top: 6px; /* Padding réduit */
+            margin-top: 15px;
+            padding-top: 10px;
             border-top: 1px dashed #7f8c8d;
-            font-size: 0.6em; /* Réduction de la police */
+            font-size: 0.65em;
             color: #333;
+        }
+        
+        .signature-area {
+            height: 40px;
+            border-top: 1px solid #999;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            font-size: 0.7em;
+        }
+        
+        .barcode {
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .barcode img {
+            max-width: 100%;
+            height: 50px;
+        }
+        
+        .additional-info {
+            font-size: 0.7em;
+            margin-top: 10px;
+        }
+        
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .instructions h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .flip-notice {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: var(--dark-color);
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .form-container {
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .id-card {
+                width: 300px;
+            }
+        }
+        
+        /* Animation pour l'apparition de la carte */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Style pour le code QR */
+        .qr-code {
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .qr-code canvas {
+            border: 1px solid #ddd;
+            padding: 5px;
+            background: white;
+        }
+        
+        /* Ajout pour le téléchargement */
+        .download-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        /* Style pour les messages de notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            background: var(--success-color);
+            color: white;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
-
-    <div class="form-container">
-        <h2>Remplissez vos informations</h2>
-        <form id="idForm">
-            <div class="form-group">
-                <label for="republique">Nom de la République :</label>
-                <input type="text" id="republique" name="republique" value="RÉPUBLIQUE FICTIVE" required>
+    <div class="app-container">
+        <header>
+            <h1>Générateur de Carte d'Identité</h1>
+            <p>Créez une carte d'identité professionnelle en quelques clics</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="form-container">
+                <h2>Informations Personnelles</h2>
+                <form id="idForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="republique">Nom de la République :</label>
+                            <input type="text" id="republique" name="republique" value="RÉPUBLIQUE FICTIVE" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardName">Nom de la carte :</label>
+                            <input type="text" id="cardName" name="cardName" value="CARTE NATIONALE D'IDENTITÉ" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nom">Nom :</label>
+                            <input type="text" id="nom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenoms">Prénoms :</label>
+                            <input type="text" id="prenoms" name="prenoms" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dateNaissance">Date de naissance :</label>
+                            <input type="date" id="dateNaissance" name="dateNaissance" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lieuNaissance">Lieu de naissance :</label>
+                            <input type="text" id="lieuNaissance" name="lieuNaissance" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sexe">Sexe :</label>
+                            <select id="sexe" name="sexe" required>
+                                <option value="F">Féminin</option>
+                                <option value="M">Masculin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taille">Taille :</label>
+                            <input type="text" id="taille" name="taille" placeholder="ex: 175 cm">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nationalite">Nationalité :</label>
+                            <input type="text" id="nationalite" name="nationalite" value="Fictive" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact">Contact :</label>
+                            <input type="text" id="contact" name="contact" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adresse">Adresse :</label>
+                        <textarea id="adresse" name="adresse" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="photoInput">Photo d'identité :</label>
+                            <input type="file" id="photoInput" name="photoInput" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label for="signatureInput">Signature :</label>
+                            <input type="file" id="signatureInput" name="signatureInput" accept="image/*">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="logoLeftInput">Logo Gauche :</label>
+                            <input type="file" id="logoLeftInput" name="logoLeftInput" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label for="logoRightInput">Logo Droit :</label>
+                            <input type="file" id="logoRightInput" name="logoRightInput" accept="image/*">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-generate">Générer la carte</button>
+                </form>
+                
+                <div class="action-buttons">
+                    <button id="downloadBtn" class="btn-download" disabled>Télécharger</button>
+                    <button id="resetBtn" class="btn-reset">Réinitialiser</button>
+                </div>
+                
+                <div class="download-options">
+                    <button id="downloadFrontBtn" class="btn-download" disabled>Face avant</button>
+                    <button id="downloadBackBtn" class="btn-download" disabled>Face arrière</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="cardName">Nom de la carte :</label>
-                <input type="text" id="cardName" name="cardName" value="CARTE NATIONALE D'IDENTITÉ" required>
+            
+            <div class="id-card-container">
+                <div class="id-card" id="idCardOutput">
+                    <div class="id-card-front">
+                        <div class="logo-circle" id="logo-left"></div>
+                        <div class="logo-circle" id="logo-right"></div>
+                        <div class="id-card-header">
+                            <h2><span id="cardRepublique"></span></h2>
+                            <h3><span id="cardCardName"></span></h3>
+                        </div>
+                        <div class="id-card-body">
+                            <div class="photo" id="photoOutput">
+                                <span>PHOTO</span>
+                            </div>
+                            <div class="info">
+                                <p><strong>Nom :</strong> <span id="cardNom"></span></p>
+                                <p><strong>Prénoms :</strong> <span id="cardPrenoms"></span></p>
+                                <p><strong>Né(e) le :</strong> <span id="cardDateNaissance"></span></p>
+                                <p><strong>À :</strong> <span id="cardLieuNaissance"></span></p>
+                                <p><strong>Sexe :</strong> <span id="cardSexe"></span></p>
+                                <p><strong>Taille :</strong> <span id="cardTaille"></span></p>
+                                <p><strong>Nationalité :</strong> <span id="cardNationalite"></span></p>
+                            </div>
+                        </div>
+                        <div class="id-card-footer">
+                            <p><strong>Contact :</strong> <span id="cardContact"></span></p>
+                            <p><strong>N° de la carte:</strong> <span id="cardNumero"></span></p>
+                            <p><strong>Date de délivrance:</strong> <span id="cardDelivrance"></span> | <strong>Date d'expiration:</strong> <span id="cardExpiration"></span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="id-card-back">
+                        <div class="barcode" id="barcode">
+                            <span>Code-barres</span>
+                        </div>
+                        <div class="qr-code" id="qrCode">
+                            <span>Code QR</span>
+                        </div>
+                        <div class="additional-info">
+                            <p><strong>Adresse :</strong> <span id="cardAdresse"></span></p>
+                            <p>Cette carte est propriété de l'État. En cas de perte ou de vol, veuillez le signaler immédiatement aux autorités compétentes.</p>
+                        </div>
+                        <div class="signature-area">
+                            <div>
+                                <p>Signature du titulaire</p>
+                                <div id="signatureOutput"></div>
+                            </div>
+                            <div>
+                                <p>Signature de l'autorité</p>
+                                <div style="height: 20px; border-bottom: 1px solid #000; width: 80px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="flip-button" id="flipBtn">Retourner la carte</button>
+                <p class="flip-notice">Cliquez sur le bouton pour voir le verso</p>
             </div>
-            <div class="form-group">
-                <label for="nom">Nom :</label>
-                <input type="text" id="nom" name="nom" required>
-            </div>
-            <div class="form-group">
-                <label for="prenoms">Prénoms :</label>
-                <input type="text" id="prenoms" name="prenoms" required>
-            </div>
-            <div class="form-group">
-                <label for="dateNaissance">Date de naissance :</label>
-                <input type="date" id="dateNaissance" name="dateNaissance" required>
-            </div>
-            <div class="form-group">
-                <label for="lieuNaissance">Lieu de naissance :</label>
-                <input type="text" id="lieuNaissance" name="lieuNaissance" required>
-            </div>
-            <div class="form-group">
-                <label for="sexe">Sexe :</label>
-                <select id="sexe" name="sexe" required>
-                    <option value="F">Féminin</option>
-                    <option value="M">Masculin</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="nationalite">Nationalité :</label>
-                <input type="text" id="nationalite" name="nationalite" value="Fictive" required>
-            </div>
-            <div class="form-group">
-                <label for="contact">Contact :</label>
-                <input type="text" id="contact" name="contact" required>
-            </div>
-            <div class="form-group">
-                <label for="photoInput">Photo d'identité :</label>
-                <input type="file" id="photoInput" name="photoInput" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label for="logoLeftInput">Logo Gauche :</label>
-                <input type="file" id="logoLeftInput" name="logoLeftInput" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label for="logoRightInput">Logo Droit :</label>
-                <input type="file" id="logoRightInput" name="logoRightInput" accept="image/*">
-            </div>
-            <button type="submit">Créer la carte</button>
-        </form>
+        </div>
+        
+        <div class="instructions">
+            <h3>Comment utiliser ce générateur</h3>
+            <ol>
+                <li>Remplissez tous les champs du formulaire</li>
+                <li>Téléchargez une photo et des logos si nécessaire</li>
+                <li>Cliquez sur "Générer la carte" pour prévisualiser</li>
+                <li>Utilisez le bouton "Retourner la carte" pour voir le verso</li>
+                <li>Téléchargez la carte avec le bouton "Télécharger"</li>
+            </ol>
+        </div>
     </div>
 
-    <div class="id-card" id="idCardOutput">
-        <div class="logo-circle" id="logo-left"></div>
-        <div class="logo-circle" id="logo-right"></div>
-        <div class="id-card-header">
-            <h2><span id="cardRepublique"></span></h2>
-            <h3><span id="cardCardName"></span></h3>
-        </div>
-        <div class="id-card-body">
-            <div class="photo" id="photoOutput">
-                <span>PHOTO</span>
-            </div>
-            <div class="info">
-                <p><strong>Nom :</strong> <span id="cardNom"></span></p>
-                <p><strong>Prénoms :</strong> <span id="cardPrenoms"></span></p>
-                <p><strong>Né(e) le :</strong> <span id="cardDateNaissance"></span></p>
-                <p><strong>À :</strong> <span id="cardLieuNaissance"></span></p>
-                <p><strong>Sexe :</strong> <span id="cardSexe"></span></p>
-                <p><strong>Nationalité :</strong> <span id="cardNationalite"></span></p>
-            </div>
-        </div>
-        <div class="id-card-footer">
-            <p><strong>Contact :</strong> <span id="cardContact"></span></p>
-            <p><strong>N° de la carte:</strong> <span id="cardNumero"></span></p>
-            <p><strong>Date de délivrance:</strong> <span id="cardDelivrance"></span> | <strong>Date d'expiration:</strong> <span id="cardExpiration"></span></p>
-        </div>
-    </div>
+    <div id="notification" class="notification"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
-        document.getElementById('idForm').addEventListener('submit', function(event) {
-            // Empêche le rechargement de la page
-            event.preventDefault();
-
-            // Récupérer les valeurs du formulaire
-            const republique = document.getElementById('republique').value.toUpperCase();
-            const cardName = document.getElementById('cardName').value.toUpperCase();
-            const nom = document.getElementById('nom').value.toUpperCase();
-            const prenoms = document.getElementById('prenoms').value;
-            const dateNaissanceInput = document.getElementById('dateNaissance').value;
-            const lieuNaissance = document.getElementById('lieuNaissance').value.toUpperCase();
-            const sexe = document.getElementById('sexe').value;
-            const nationalite = document.getElementById('nationalite').value;
-            const contact = document.getElementById('contact').value;
-            const photoFile = document.getElementById('photoInput').files[0];
-            const logoLeftFile = document.getElementById('logoLeftInput').files[0];
-            const logoRightFile = document.getElementById('logoRightInput').files[0];
-
-            // Formater la date de naissance (AAAA-MM-JJ -> JJ/MM/AAAA)
-            const dateParts = dateNaissanceInput.split('-');
-            const dateNaissance = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-
-            // Mettre à jour les informations sur la carte
-            document.getElementById('cardRepublique').textContent = republique;
-            document.getElementById('cardCardName').textContent = cardName;
-            document.getElementById('cardNom').textContent = nom;
-            document.getElementById('cardPrenoms').textContent = prenoms;
-            document.getElementById('cardDateNaissance').textContent = dateNaissance;
-            document.getElementById('cardLieuNaissance').textContent = lieuNaissance;
-            document.getElementById('cardSexe').textContent = sexe;
-            document.getElementById('cardNationalite').textContent = nationalite;
-            document.getElementById('cardContact').textContent = contact;
-
-            // Fonction pour charger une image
-            const loadImage = (file, element) => {
-                element.innerHTML = ''; // Vider le contenu
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('idForm');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadFrontBtn = document.getElementById('downloadFrontBtn');
+            const downloadBackBtn = document.getElementById('downloadBackBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const flipBtn = document.getElementById('flipBtn');
+            const idCard = document.getElementById('idCardOutput');
+            const notification = document.getElementById('notification');
+            
+            // Afficher une notification
+            function showNotification(message, isSuccess = true) {
+                notification.textContent = message;
+                notification.style.background = isSuccess ? 'var(--success-color)' : 'var(--accent-color)';
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Générer un numéro de carte aléatoire
+            function generateCardNumber() {
+                return Math.floor(Math.random() * 900000000000) + 100000000000;
+            }
+            
+            // Formater une date au format JJ/MM/AAAA
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            }
+            
+            // Charger une image depuis un input file
+            function loadImage(file, element, defaultContent) {
+                element.innerHTML = defaultContent || '';
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
@@ -285,32 +690,227 @@
                     };
                     reader.readAsDataURL(file);
                 }
-            };
-
-            // Gérer l'affichage des images
-            loadImage(photoFile, document.getElementById('photoOutput'));
-            loadImage(logoLeftFile, document.getElementById('logo-left'));
-            loadImage(logoRightFile, document.getElementById('logo-right'));
-            
-            if (!photoFile) {
-                document.getElementById('photoOutput').innerHTML = '<span>PHOTO</span>';
             }
-
-            // Générer des informations fictives pour le pied de page
-            document.getElementById('cardNumero').textContent = Math.floor(Math.random() * 900000000000) + 100000000000;
-            const today = new Date();
-            const delivrance = today.toLocaleDateString('fr-FR');
-            const expiration = new Date(today.setFullYear(today.getFullYear() + 10)).toLocaleDateString('fr-FR');
-            document.getElementById('cardDelivrance').textContent = delivrance;
-            document.getElementById('cardExpiration').textContent = expiration;
-
-            // Afficher la carte
-            document.getElementById('idCardOutput').style.display = 'block';
             
-            // Optionnel: cacher le formulaire après la création
-            // document.querySelector('.form-container').style.display = 'none';
+            // Générer un code-barres
+            function generateBarcode(number, element) {
+                element.innerHTML = '';
+                const canvas = document.createElement('canvas');
+                try {
+                    JsBarcode(canvas, number, {
+                        format: "code128",
+                        displayValue: true,
+                        fontSize: 12,
+                        background: "#fff",
+                        lineColor: "#000"
+                    });
+                    element.appendChild(canvas);
+                } catch (error) {
+                    console.error("Erreur lors de la génération du code-barres:", error);
+                    element.innerHTML = '<span>Erreur code-barres</span>';
+                }
+            }
+            
+            // Générer un code QR
+            function generateQRCode(text, element) {
+                element.innerHTML = '';
+                const canvas = document.createElement('canvas');
+                try {
+                    QRCode.toCanvas(canvas, text, {
+                        width: 100,
+                        margin: 1,
+                        color: {
+                            dark: "#000",
+                            light: "#fff"
+                        }
+                    }, function(error) {
+                        if (error) {
+                            console.error(error);
+                            element.innerHTML = '<span>Erreur QR code</span>';
+                        }
+                    });
+                    element.appendChild(canvas);
+                } catch (error) {
+                    console.error("Erreur lors de la génération du QR code:", error);
+                    element.innerHTML = '<span>Erreur QR code</span>';
+                }
+            }
+            
+            // Télécharger une image de la carte
+            function downloadCard(side = 'both') {
+                // Sauvegarder l'état actuel de la carte
+                const wasFlipped = idCard.classList.contains('flip-card');
+                
+                // Si on veut seulement une face, s'assurer que la bonne face est visible
+                if (side === 'front' && wasFlipped) {
+                    idCard.classList.remove('flip-card');
+                } else if (side === 'back' && !wasFlipped) {
+                    idCard.classList.add('flip-card');
+                }
+                
+                // Attendre le rendu de la carte
+                setTimeout(() => {
+                    html2canvas(idCard, {
+                        backgroundColor: null,
+                        scale: 2 // Qualité plus élevée
+                    }).then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = `carte_identite_${side === 'both' ? 'complet' : side}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        
+                        // Restaurer l'état précédent de la carte
+                        if (side === 'front' && wasFlipped) {
+                            idCard.classList.add('flip-card');
+                        } else if (side === 'back' && !wasFlipped) {
+                            idCard.classList.remove('flip-card');
+                        }
+                        
+                        showNotification('Téléchargement réussi!');
+                    }).catch(error => {
+                        console.error("Erreur lors de la capture de la carte:", error);
+                        showNotification('Erreur lors du téléchargement', false);
+                    });
+                }, 500);
+            }
+            
+            // Gérer la soumission du formulaire
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Récupérer les valeurs du formulaire
+                const republique = document.getElementById('republique').value.toUpperCase();
+                const cardName = document.getElementById('cardName').value.toUpperCase();
+                const nom = document.getElementById('nom').value.toUpperCase();
+                const prenoms = document.getElementById('prenoms').value;
+                const dateNaissanceInput = document.getElementById('dateNaissance').value;
+                const lieuNaissance = document.getElementById('lieuNaissance').value.toUpperCase();
+                const sexe = document.getElementById('sexe').value;
+                const sexeText = sexe === 'F' ? 'Féminin' : 'Masculin';
+                const nationalite = document.getElementById('nationalite').value;
+                const contact = document.getElementById('contact').value;
+                const adresse = document.getElementById('adresse').value;
+                const taille = document.getElementById('taille').value;
+                const photoFile = document.getElementById('photoInput').files[0];
+                const signatureFile = document.getElementById('signatureInput').files[0];
+                const logoLeftFile = document.getElementById('logoLeftInput').files[0];
+                const logoRightFile = document.getElementById('logoRightInput').files[0];
+                
+                // Formater la date de naissance
+                const dateNaissance = formatDate(dateNaissanceInput);
+                
+                // Mettre à jour les informations sur la carte
+                document.getElementById('cardRepublique').textContent = republique;
+                document.getElementById('cardCardName').textContent = cardName;
+                document.getElementById('cardNom').textContent = nom;
+                document.getElementById('cardPrenoms').textContent = prenoms;
+                document.getElementById('cardDateNaissance').textContent = dateNaissance;
+                document.getElementById('cardLieuNaissance').textContent = lieuNaissance;
+                document.getElementById('cardSexe').textContent = sexeText;
+                document.getElementById('cardTaille').textContent = taille;
+                document.getElementById('cardNationalite').textContent = nationalite;
+                document.getElementById('cardContact').textContent = contact;
+                document.getElementById('cardAdresse').textContent = adresse;
+                
+                // Gérer l'affichage des images
+                loadImage(photoFile, document.getElementById('photoOutput'), '<span>PHOTO</span>');
+                loadImage(signatureFile, document.getElementById('signatureOutput'), '');
+                loadImage(logoLeftFile, document.getElementById('logo-left'));
+                loadImage(logoRightFile, document.getElementById('logo-right'));
+                
+                // Générer des informations fictives pour le pied de page
+                const cardNumber = generateCardNumber();
+                document.getElementById('cardNumero').textContent = cardNumber;
+                
+                const today = new Date();
+                const delivrance = formatDate(today.toISOString().split('T')[0]);
+                const expirationDate = new Date(today);
+                expirationDate.setFullYear(expirationDate.getFullYear() + 10);
+                const expiration = formatDate(expirationDate.toISOString().split('T')[0]);
+                
+                document.getElementById('cardDelivrance').textContent = delivrance;
+                document.getElementById('cardExpiration').textContent = expiration;
+                
+                // Générer le code-barres et le QR code
+                generateBarcode(cardNumber.toString(), document.getElementById('barcode'));
+                
+                // Créer le texte pour le QR code
+                const qrText = `CARTE D'IDENTITÉ\nNuméro: ${cardNumber}\nNom: ${nom}\nPrénoms: ${prenoms}\nNé(e) le: ${dateNaissance}\nÀ: ${lieuNaissance}\nDélivrée le: ${delivrance}\nExpire le: ${expiration}`;
+                generateQRCode(qrText, document.getElementById('qrCode'));
+                
+                // Afficher la carte si elle était cachée
+                idCard.style.display = 'block';
+                
+                // Activer l'animation et le bouton de téléchargement
+                idCard.classList.add('fade-in');
+                downloadBtn.disabled = false;
+                downloadFrontBtn.disabled = false;
+                downloadBackBtn.disabled = false;
+                
+                // Masquer l'animation après qu'elle soit terminée
+                setTimeout(() => {
+                    idCard.classList.remove('fade-in');
+                }, 500);
+                
+                showNotification('Carte générée avec succès!');
+            });
+            
+            // Gérer le téléchargement de la carte complète
+            downloadBtn.addEventListener('click', function() {
+                downloadCard('both');
+            });
+            
+            // Gérer le téléchargement de la face avant
+            downloadFrontBtn.addEventListener('click', function() {
+                downloadCard('front');
+            });
+            
+            // Gérer le téléchargement de la face arrière
+            downloadBackBtn.addEventListener('click', function() {
+                downloadCard('back');
+            });
+            
+            // Gérer la réinitialisation du formulaire
+            resetBtn.addEventListener('click', function() {
+                form.reset();
+                idCard.style.display = 'none';
+                downloadBtn.disabled = true;
+                downloadFrontBtn.disabled = true;
+                downloadBackBtn.disabled = true;
+                
+                // Réinitialiser les logos
+                document.getElementById('logo-left').innerHTML = '';
+                document.getElementById('logo-right').innerHTML = '';
+                
+                // Réinitialiser les codes
+                document.getElementById('barcode').innerHTML = '<span>Code-barres</span>';
+                document.getElementById('qrCode').innerHTML = '<span>Code QR</span>';
+                
+                // Remettre la carte à l'endroit si elle était retournée
+                if (idCard.classList.contains('flip-card')) {
+                    idCard.classList.remove('flip-card');
+                    flipBtn.textContent = 'Retourner la carte';
+                }
+                
+                showNotification('Formulaire réinitialisé');
+            });
+            
+            // Gérer le retournement de la carte
+            flipBtn.addEventListener('click', function() {
+                idCard.classList.toggle('flip-card');
+                
+                if (idCard.classList.contains('flip-card')) {
+                    flipBtn.textContent = 'Face avant';
+                } else {
+                    flipBtn.textContent = 'Retourner la carte';
+                }
+            });
+            
+            // Initialiser la date de naissance à une valeur par défaut (il y a 25 ans)
+            const defaultDate = new Date();
+            defaultDate.setFullYear(defaultDate.getFullYear() - 25);
+            document.getElementById('dateNaissance').valueAsDate = defaultDate;
         });
     </script>
-
 </body>
 </html>
